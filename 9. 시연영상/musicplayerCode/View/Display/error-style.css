@@ -1,0 +1,7 @@
+.file-loading-error {
+    position: absolute;
+    width: 100%;
+    font-size: 3.5vw;
+    text-align: center;
+    top: 50%;
+}

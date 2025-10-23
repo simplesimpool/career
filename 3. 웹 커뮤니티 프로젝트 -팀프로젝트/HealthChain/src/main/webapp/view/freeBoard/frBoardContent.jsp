@@ -1,0 +1,610 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<style type="text/css">
+/* 전체 배경과 폰트 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f1eb;
+    color: #2b473e;
+    margin: 20px;
+}
+
+/* 게시글 컨테이너 */
+.content-container {
+    background: #ffffff;
+    border: 1px solid #6d8c50;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.id-style, .view-cnt-style {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #6d8c50;
+}
+
+.title-style, .writer-style {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.content-style {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 4px;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
+
+.reg-date-style {
+    text-align: right;
+    font-size: 14px;
+    color: #999;
+}
+
+/* 반응 컨테이너 */
+.react-container {
+    text-align: center;
+    margin: 20px 0;
+    display: flex;
+    justify-content: flex-end; /* 버튼들을 오른쪽으로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+}
+
+.react-container button {
+    background-color: #6d8c50;
+    margin: 5px;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s; 
+}
+
+.react-container button:hover {
+    background-color: #2b473e;
+}
+
+/* 댓글 컨테이너 */
+.cmt-container {
+    background: #f4f1eb;
+    border: 1px solid #6d8c50;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.cmt-info {
+    font-size: 14px;
+    color: #6d8c50;
+    margin-bottom: 5px;
+}
+
+.cmt-content {
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+}
+
+
+.cmt-update, .cmt-delete {
+     background-color: #6d8c50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 5px; /* 버튼을 콘텐츠 아래로 밀기 */
+    margin-bottom: 10px;
+     margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+   
+   
+}
+
+
+.cmt-update:hover, .cmt-delete:hover {
+    background-color: #2b473e;
+}
+
+
+
+/* 댓글 작성 컨테이너 */
+.cmt-write-container {
+    margin-top: 20px;
+    text-align: center;
+    display: flex; /* 플렉스 박스 레이아웃 사용 */
+    align-items: center;   
+   
+}
+
+.cmt-write-form {
+   	flex: 1; /* 남은 공간을 채움 */
+    height: 60px; /* 높이 고정 */
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    resize: none;
+    box-sizing: border-box; /* 패딩과 테두리 포함 */
+    
+}
+
+.cmt-write-button {
+    margin-left: 10px; /* 버튼과 입력창 간격 */
+    height: 40px; /* 입력창과 같은 높이 */
+    background-color: #6d8c50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    padding: 10 20px; /* 좌우 여백 */
+    padding-bottom: 30px;
+ 
+}
+
+.cmt-write-button:hover {
+    background-color: #2b473e;
+}
+
+/* 댓글 페이지 네비게이션 */
+.cmt-page-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.cmt-page-container button {
+    background-color: #6d8c50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.cmt-page-container button:hover {
+    background-color: #2b473e;
+}
+
+.cmt-react-textarea {
+    overflow-wrap: break-word;
+    width: 100%;
+    height: 100px;
+    resize: none;
+}
+
+.page-input {
+	
+}
+
+.cmt-page-search-container {
+	margin-top: 10px;
+    display: flex;            /* flexbox 사용 */
+    justify-content: center;  /* 가로 중앙 정렬 */
+    align-items: center;      /* 세로 중앙 정렬 */
+}
+</style>
+</head>
+<body>
+<div class="content-container">
+	<div class="id-style">글번호 : ${frb.getFrb_id() }</div>
+	<div class="view-cnt-style">조회수 : ${frb.getFrb_view_cnt() }</div><br>
+	<div class="title-style">제목 : ${frb.getFrb_title() }</div>
+	<div class="writer-style">작성자 : ${user.getUser_nickname() }</div>
+	<div class="content-style">${frb.getFrb_content() }</div>
+	<div class="reg-date-style">작성일 : ${frb.getFrb_reg_date() }</div>
+	<div class="react-container">
+		<c:if test="${not empty sessionScope.userId && frb.getUser_id() == sessionScope.userId && 'admin' != sessionScope.userId}"><!-- 세션이 설정되어있고 작성글 아이디와 세션아이디가 같을떄 그리고 운영자가 아닐떄 -->
+			<button onclick="location.href='frBoardUpdateForm.sg?page=${page}&id=${frb.getFrb_id()}'">수정</button>
+			<button onclick="deleteAction()" style="display: inline-block; background-color: #f44336;">삭제</button>
+		</c:if>
+		<c:if test="${not empty sessionScope.userId && 'admin' == sessionScope.userId}"><!--세션이 설정되어 있고 관리자 일떄  -->
+			<button onclick="deleteAction()" style="background-color: #f44336;">삭제</button>
+			<c:if test="${frb.getUser_id() == 'admin'}"><!--관리자글일때만 수정버튼생김  -->
+				<button onclick="location.href='frBoardUpdateForm.sg?page=${page}&id=${frb.getFrb_id()}'">수정</button>
+			</c:if>
+		</c:if>
+		<button onclick="location.href='frBoard.sg?page=${page}'">목록</button>
+	</div>
+</div>
+<div class="cmt-container"><!--DOM 검색 대상  -->
+	<!-- <div class="cmt-info">유저닉네임/생성일자</div>
+	<button class="cmt-update" onclick="showCmtUpdateForm()">수정</button>
+	<button class="cmt-delete" onclick="cmtDeleteAction()">삭제</button>
+	<div class="cmt-content">글내용입니담나어롸먼외라ㅓㅁ노아ㅓ리ㅗㅁ나ㅣ어뢰만ㅇㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄹ</div>
+	cmt-react-container  
+	<div class="cmt-react-container" style="display: none;">
+		<textarea class="cmt-react-textarea">ssadasd</textarea>
+		<button class="cmt-react-button">댓글수정하기</button>
+	</div>
+	
+	<div class="cmt-info">유저닉네임/생성일자</div>
+	<button class="cmt-update" onclick="showCmtUpdateForm()">수정</button>
+	<button class="cmt-delete" onclick="cmtDeleteAction()">삭제</button>
+	<div class="cmt-content">글내용입니담나어롸먼외라ㅓㅁ노아ㅓ리ㅗㅁ나ㅣ어뢰만ㅇㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄹ</div>
+	cmt-react-container  
+	<div class="cmt-react-container" style="display: none;">
+		<textarea class="cmt-react-textarea">ssadasd</textarea>
+		<button class="cmt-react-button">댓글수정하기</button>
+	</div> -->
+</div>
+<c:if test="${not empty sessionScope.userId && frb.getUser_id() != 'admin'}">
+	<div class="cmt-write-container">
+		<textarea class="cmt-write-form" maxlength="300" placeholder="최대 300자"></textarea>
+		<button class="cmt-write-button" onclick="cmtWriteAction()">댓글 작성하기</button>
+	</div>
+</c:if>
+<div class="cmt-page-container"><!--DOM 검색 대상  -->
+	<!-- <button class="cmt-prev-style">이전</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(1)">1</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(2)">2</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(3)">3</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(4)">4</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(5)">5</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(6)">6</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(7)">7</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(8)">8</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(9)">9</button>
+	<button class="cmt-page-style" onclick="reqCmtPage(10)">10</button>
+	<button class="cmt-next-style">다음</button> -->
+</div>
+<div class="cmt-page-search-container">
+	검색 폐이지 : <input type="number" class="page-input">
+	<button onclick="moveToPage()">이동</button>
+</div>
+<script type="text/javascript">
+	let res;
+	let cmtArray = [];
+	let cmtUserNickNameArray = [];
+	let adminId;
+	function deleteAction() {
+		const result = confirm("정말로 삭제하시겠습니까?");
+		if (result) {
+	        location.href="frBoardDelete.sg?page=${page}&id=${frb.getFrb_id()}";
+	    }
+	}
+	function moveToPage() {
+		const inputPage = document.querySelector(".page-input").value;
+		
+		if (inputPage === "") {
+			alert("이동할 폐이지를 입력하세요");
+		} else {
+			reqCmtPage(inputPage, "displayPage");
+		}
+	}
+	window.onload = function() {
+		axios.post("http://localhost:8080/HealthChain/FrbLoadServlet", {
+			frbId: ${frb.getFrb_id()}
+		})
+		.then(response => {
+			res = response.data;
+			cmtArray = res.cmtList;
+			cmtUserNickNameArray = res.cmtUserNickNameList;
+			adminId = res.adminId;
+			
+			clearCmtPageContainer();
+			insertCmtPageButton();
+			
+			clearCmt();
+			insertCmt();
+			
+			if(sessionStorage.getItem("fromMyPageCmtPageStatus") !== "false" && sessionStorage.getItem("fromMyPageCmtPageStatus") !== null) {
+				reqCmtPage(sessionStorage.getItem("cmtPage"), "displayPage");
+				sessionStorage.setItem("fromMyPageCmtPageStatus", "false");
+			}
+			
+			const pageElements = document.querySelectorAll(".cmt-page-style");
+			for (const element of pageElements) {
+				if ("1" === element.textContent) {
+					element.style.textDecoration = "underline";
+				}
+			}
+			//console.log(res);
+		})
+		.catch(error => {
+			console.error('window.onload error : ', error);
+		});
+	}
+	function reqCmtPage(cmtPageParam, actionParam) {
+		axios.post("http://localhost:8080/HealthChain/FrbCmtPageResServlet", {
+			frbId: ${frb.getFrb_id()},
+			cmtPage: cmtPageParam
+		})
+		.then(response => {
+			res = response.data;
+			cmtArray = res.cmtList;
+			cmtUserNickNameArray = res.cmtUserNickNameList;
+			adminId = res.adminId;
+			
+			clearCmtPageContainer();
+			insertCmtPageButton();
+			
+			clearCmt();
+			insertCmt();
+			
+			if (actionParam === "displayPage") {
+				const pageElements = document.querySelectorAll(".cmt-page-style");
+				
+				for (const element of pageElements) {
+					if ("" + res.cmtPage === element.textContent) {
+						element.style.textDecoration = "underline";
+					}
+				}
+			} 
+			else if (actionParam === "cmtDelete") {
+				if(res.cmtMaxPage < cmtPageParam) {
+					reqCmtPage(res.cmtMaxPage, "displayPage");
+					return;
+				}
+				
+				const pageElements = document.querySelectorAll(".cmt-page-style");
+				
+				for (const element of pageElements) {
+					if ("" + res.cmtPage === element.textContent) {
+						element.style.textDecoration = "underline";
+					}
+				}
+			}
+			
+			//console.log(res);
+		})
+		.catch(error => {
+			console.error('reqCmtPage error : ', error);
+		});
+	}
+	function clearCmtPageContainer() {
+		const container = document.querySelector('.cmt-page-container');
+		container.innerHTML = "";
+	}
+	function insertCmtPageButton() {
+		const container = document.querySelector('.cmt-page-container');
+		
+		if(res.cmtStartPage !== 1) {
+			const prevButton = document.createElement("button");
+			prevButton.textContent = "이전";
+			prevButton.classList.add("cmt-prev-style");
+			prevButton.onclick = function() {
+			    reqCmtPage(res.cmtPrevPage, "displayPage");
+			};
+			container.appendChild(prevButton);
+		}
+		for(let i = res.cmtStartPage; i <= res.cmtEndPage; i++) {
+			const pageButton = document.createElement("button");
+			pageButton.textContent = "" + i;
+			pageButton.classList.add("cmt-page-style");
+			pageButton.onclick = function() {
+			    reqCmtPage(i, "displayPage");
+			};
+			container.appendChild(pageButton);
+		}
+		if(res.cmtEndPage !== res.cmtMaxPage) {
+			const nextButton = document.createElement("button");
+			nextButton.textContent = "다음";
+			nextButton.classList.add("cmt-next-style");
+			nextButton.onclick = function() {
+			    reqCmtPage(res.cmtNextPage, "displayPage");
+			};
+			container.appendChild(nextButton);
+		}
+	}
+	function clearCmt() {
+		const container = document.querySelector('.cmt-container');
+		container.innerHTML = "";
+	}
+	function insertCmt() {
+		const container = document.querySelector('.cmt-container');
+		const userId = "<%=(String)session.getAttribute("userId")%>";
+		
+		for (let i = 0; i < cmtArray.length; i++) {
+			const cmtInfo = document.createElement("div");
+			cmtInfo.textContent = "" + cmtUserNickNameArray[i] + "/" + cmtArray[i].frb_cmt_date;
+			cmtInfo.classList.add("cmt-info");
+			
+			const cmtUpdate = document.createElement("button");
+			cmtUpdate.textContent = "수정";
+			cmtUpdate.classList.add("cmt-update");
+			cmtUpdate.onclick = function() {
+			    showCmtUpdateForm(i, cmtArray[i].frb_cmt_id, res.cmtPage, cmtArray[i].frb_cmt_reply);
+			};
+			
+			const cmtDelete = document.createElement("button");
+			cmtDelete.textContent = "삭제";
+			cmtDelete.classList.add("cmt-delete");
+			cmtDelete.onclick = function() {
+			    cmtDeleteAction(cmtArray[i].frb_cmt_id, res.cmtPage);
+			};
+			//react 컨테이너 넣기
+			const cmtReactContainer = document.createElement("div");
+			cmtReactContainer.classList.add("cmt-react-container");
+			cmtReactContainer.style.display = "none";
+			//
+			const cmtContent = document.createElement("div");
+			cmtContent.textContent = cmtArray[i].frb_cmt_reply;
+			cmtContent.classList.add("cmt-content");
+			
+			container.appendChild(cmtInfo);
+			if(userId !== 'null') { //세션 존재할떄
+				if(cmtArray[i].user_id === userId) {
+					container.appendChild(cmtUpdate);
+				}
+				if(cmtArray[i].user_id === userId || userId === adminId) {
+					container.appendChild(cmtDelete);
+				}
+			}
+			container.appendChild(cmtContent);
+			container.appendChild(cmtReactContainer);
+		}
+	}
+	function showCmtUpdateForm(eleIdxParam, frbCmtIdParam, cmtPageParam, frbCmtReplyParam) {
+		const eleIdx = eleIdxParam;
+		const frbCmtId = frbCmtIdParam;
+		const cmtPage = cmtPageParam;
+		const frbCmtReply = frbCmtReplyParam;
+		const cmtReactContainers = document.querySelectorAll(".cmt-react-container");
+		
+		cmtReactContainers[eleIdx].innerHTML = "";
+		
+		const cmtReactTextArea = document.createElement("textarea");
+		cmtReactTextArea.classList.add("cmt-react-textarea");
+		cmtReactTextArea.textContent = frbCmtReply;
+		cmtReactTextArea.setAttribute("maxlength", "300");
+		cmtReactTextArea.setAttribute("placeholder", "최대 300자");
+		cmtReactContainers[eleIdx].appendChild(cmtReactTextArea);
+		
+		const cmtReactButton = document.createElement("button");
+		cmtReactButton.classList.add("cmt-react-button");
+		cmtReactButton.textContent = "댓글수정하기";
+		cmtReactButton.onclick = function() {
+			cmtUpdateAction(eleIdx, frbCmtId, cmtPage);
+		}
+		cmtReactContainers[eleIdx].appendChild(cmtReactButton);
+		
+		if(cmtReactContainers[eleIdx].style.display === "block") {
+			cmtReactContainers[eleIdx].style.display = "none"
+		}
+		else {
+			cmtReactContainers[eleIdx].style.display = "block"
+		}
+		//console.log("showCmtUpdateForm() clicked");
+		/* console.log("eleIdx : " + eleIdx);
+		console.log("frbCmtId : " + frbCmtId);
+		console.log("cmtPage : " + cmtPage); */
+	}
+	function cmtUpdateAction(eleIdxParam, frbCmtIdParam, cmtPageParam) {
+		const cmtReactContainers = document.querySelectorAll(".cmt-react-container");
+		const cmtReactTextArea = cmtReactContainers[eleIdxParam].querySelector(".cmt-react-textarea");
+		
+		if(cmtReactTextArea.value === "") {
+			alert("수정할 댓글을 입력해주세요");
+			return;
+		}
+		
+		/* console.log("cmtUpdateAction() clicked");
+		console.log("eleIdx : " + eleIdxParam);
+		console.log("frbCmtReply : " + cmtReactTextArea.value);
+		console.log("cmtPage : " + cmtPageParam); */
+		axios.post("http://localhost:8080/HealthChain/FrbCmtUpdateServlet", {
+			frbCmtId: frbCmtIdParam,
+			frbCmtReply: cmtReactTextArea.value,
+			cmtPage: cmtPageParam
+		})
+		.then(response => {
+			reqCmtPage(response.data.cmtPage, "displayPage");
+			//console.log("댓글 수정성공");
+		})
+		.catch(error => {
+			console.error('cmtDeleteAction() error : ', error);
+		});
+	}
+	function cmtDeleteAction(frbCmtIdParam, cmtPageParam) {
+		/* console.log("cmtDeleteAction() clicked");
+		console.log("frbCmtId : " + frbCmtId);
+		console.log("cmtPage : " + cmtPage); */
+		
+		axios.post("http://localhost:8080/HealthChain/FrbCmtDeleteServlet", {
+			frbCmtId: frbCmtIdParam,
+			cmtPage: cmtPageParam
+		})
+		.then(response => {
+			reqCmtPage(response.data.cmtPage, "cmtDelete");
+			//console.log("댓글 삭제성공");
+		})
+		.catch(error => {
+			console.error('cmtDeleteAction() error : ', error);
+		});
+	}
+	async function cmtWriteAction() {
+		const cmtWriteForm = document.querySelector(".cmt-write-form");
+		//console.log("cmtWriteAction() clicked");
+		//console.log("cmtWriteForm value : " + cmtWriteForm.value);
+		const isActivityBlocked = await userActivityChk() + "";
+			
+		if(isActivityBlocked === "true") {
+			alert("활동이 정지된 상태입니다");
+			return;
+		}
+		
+		if(cmtWriteForm.value === "") {
+			alert("작성할 댓글을 입력해주세요");
+			return;
+		}
+		
+		await axios.post("http://localhost:8080/HealthChain/FrbCmtWriteServlet", {
+			frbCmtReply: cmtWriteForm.value,
+			frbId: ${frb.getFrb_id()}
+		})
+		.then(response => {
+			cmtWriteForm.value = "";
+			reqCmtPage(1, "displayPage");
+			//console.log("댓글 작성성공");
+		})
+		.catch(error => {
+			console.error('cmtWriteAction() error : ', error);
+		});
+	}
+	async function userActivityChk() {
+		let response = null;
+		
+		try {
+			response = await axios.post("http://localhost:8080/HealthChain/FrbCmtCheckUserActivityServlet", {
+				id : "<%=(String)session.getAttribute("userId")%>"
+			});
+			return response.data.result;
+		}
+		catch(error) {
+			return "error";
+		}
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<%-- <br>
+frb_id : ${frb.getFrb_id() }<br>
+user_id : ${user.getUser_id() }<br>
+page : ${page }<br> --%>
+</body>
+</html>

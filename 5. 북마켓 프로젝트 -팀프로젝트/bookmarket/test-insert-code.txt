@@ -1,0 +1,27 @@
+for (int i = 0; i < 1234; i++) {
+	BookSG book = new BookSG();
+	int curBookTotal = bookMapper.getTotal();
+	book.setBookId(curBookTotal + 1);
+	book.setBscId(i % 14 + 1);
+	book.setBookPrice(i + 1);
+	book.setBookName("bookName" + (i + 1));
+	book.setBookWriter("bookWriter" + (i + 1));
+	book.setBookDesc("bookDesc" + (i + 1));
+	book.setBookIndex("bookIndex" + (i + 1));
+	book.setBookPubCmt("bookPubCmt" + (i + 1));
+	book.setBookStock((i + 1));
+	book.setBookImg("bookImg.png");
+	book.setBookPage((i + 1));
+	book.setBookSize("bookSize" + (i + 1));
+	book.setBookIsbn("" + (i + 1));
+	int result = bookMapper.insert(book);
+}
+
+for (int i = 1; i <= 1234; i++) {
+	BookSellRequestSG bsr = new BookSellRequestSG();
+	bsr.setBsrId(i);
+	bsr.setBookId(i);
+	bsr.setPubId(i);
+	bsr.setBsrCnt(i);
+	int result = bsrMapper.insert(bsr);
+}

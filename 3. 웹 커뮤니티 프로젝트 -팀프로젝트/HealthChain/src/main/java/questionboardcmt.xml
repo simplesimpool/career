@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="questionboardcmtns">
+	<insert id="insert" parameterType="questionboardcmt">
+		insert into questionBoardCmt values (qsb_cmt_seq.nextval, #{user_id}, #{qsb_id}, #{qsb_cmt_reply}, sysdate, 'n', 'qsb_cmt')
+	</insert>
+	<select id="getTotalByQsbId" parameterType="string" resultType="integer">
+		select count(*) from questionBoardCmt where qsb_cmt_del = 'n' and qsb_id = #{qsbId}
+	</select>
+	<select id="getIndex" parameterType="map" resultType="integer">
+		SELECT rnum - 1
+		    FROM (
+		        SELECT questionBoardCmt.*, ROW_NUMBER() OVER (ORDER BY qsb_cmt_date DESC, qsb_cmt_id desc) AS rnum
+		        FROM questionBoardCmt
+		        WHERE qsb_cmt_del = 'n' and qsb_id = #{qsbId}
+		    )where qsb_cmt_id = #{qsbCmtId}
+	</select>
+	<select id="getCommentList" parameterType="map" resultType="questionboardcmt" flushCache="true">
+		SELECT * 
+		    FROM (
+		        SELECT questionBoardCmt.*, ROW_NUMBER() OVER (ORDER BY qsb_cmt_date DESC, qsb_cmt_id desc) AS rnum
+		        FROM questionBoardCmt
+		        WHERE qsb_cmt_del = 'n' and qsb_id = #{qsbId}
+		    )
+		WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+	</select>
+	<update id="deleteTreeByQsbId" parameterType="string">
+		UPDATE questionBoardCmt
+		SET qsb_cmt_del = 'y'
+		WHERE qsb_cmt_id IN (
+		    SELECT qsb_cmt_id
+		    FROM questionBoardCmt
+		    WHERE qsb_id = #{id}
+		)
+	</update>
+	<select id="select" parameterType="string" resultType="questionboardcmt">
+		select * from questionBoardCmt where qsb_cmt_id = #{id}
+	</select>
+	<update id="update" parameterType="questionboardcmt">
+		update questionBoardCmt set qsb_cmt_reply = #{qsb_cmt_reply}, qsb_cmt_del = #{qsb_cmt_del} where qsb_cmt_id = #{qsb_cmt_id}
+	</update>
+</mapper>

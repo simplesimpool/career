@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="reviewboardns">
+	<insert id="insert" parameterType="reviewboard">
+		insert into reviewBoard values(rvb_seq.nextval, #{user_id}, #{rvb_title}, #{rvb_content}, sysdate, 0, 0, 'n', 'rvb')
+	</insert>
+	<select id="getTotal" resultType="integer">
+		select count(*) from reviewBoard where rvb_del = 'n'
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from reviewBoard where rvb_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getNoticeTotal" resultType="integer">
+		select count(*) from reviewBoard where rvb_del = 'n' and user_id = 'admin'
+	</select>
+	<select id="getIndexByDate" parameterType="string" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            union all
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		        )
+		    ) f_qry
+		)where rvb_id = #{id}
+	</select>
+	<select id="getIndexByLike" parameterType="string" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            union all
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id != 'admin' order by rvb_like_cnt desc, rvb_id desc)
+		        )
+		    ) f_qry
+		)where rvb_id = #{id}
+	</select>
+	<select id="select" parameterType="string" resultType="reviewboard">
+		select * from reviewBoard where rvb_id = #{id}
+	</select>
+	<update id="update" parameterType="reviewboard">
+		update reviewBoard set 
+		rvb_title = #{rvb_title},
+		rvb_content = #{rvb_content},
+		rvb_view_cnt = #{rvb_view_cnt},
+		rvb_like_cnt = #{rvb_like_cnt},
+		rvb_del = #{rvb_del}
+		where rvb_id = #{rvb_id}
+	</update>
+	<select id="getBoardListByNotice" parameterType="map" resultType="reviewboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByUserId" parameterType="map" resultType="reviewboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            union all
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		        )
+		    ) f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByDate" parameterType="map" resultType="reviewboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            union all
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByLike" parameterType="map" resultType="reviewboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            union all
+		            select * from (select * from reviewboard where rvb_del = 'n' and user_id != 'admin' order by rvb_like_cnt desc, rvb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+</mapper>

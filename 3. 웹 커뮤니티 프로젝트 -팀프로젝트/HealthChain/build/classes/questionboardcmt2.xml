@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="questionboardcmt2ns">
+	<insert id="insert" parameterType="questionboardcmt2">
+		insert into questionBoardCmt2 
+		values(qsb_cmt2_seq.nextval, #{user_id}, #{qsb_id}, #{qsb_cmt_id}, #{qsb_cmt2_reply}, sysdate, 'n', 0, -1, 'qsb_cmt2')
+	</insert>
+	<insert id="reply" parameterType="questionboardcmt2">
+		insert into questionBoardCmt2 
+		values(qsb_cmt2_seq.nextval, #{user_id}, #{qsb_id}, #{qsb_cmt_id}, #{qsb_cmt2_reply}, sysdate, 'n', #{qsb_cmt2_level}, #{qsb_cmt2_parent_id}, 'qsb_cmt2')
+	</insert>
+	<select id="getTotalByQsbIdAndQsbCmtId" parameterType="map" resultType="integer">
+		select count(*) from questionBoardCmt2 where qsb_cmt2_del = 'n' and qsb_id = #{qsbId} and qsb_cmt_id = #{qsbCmtId}
+	</select>
+	<select id="getIndex" parameterType="map" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM questionBoardCmt2
+		        where qsb_cmt2_del = 'n' and qsb_id = #{qsbId} and qsb_cmt_id = #{qsbCmtId}
+		        START WITH qsb_cmt2_parent_id = -1
+		        CONNECT BY PRIOR qsb_cmt2_id = qsb_cmt2_parent_id 
+		        ORDER SIBLINGS BY qsb_cmt2_date DESC, qsb_cmt2_id DESC 
+		    )f_qry
+		)where qsb_cmt2_id = #{qsbCmt2Id}
+	</select>
+	<select id="getCommentList" parameterType="map" resultType="questionboardcmt2" flushCache="true">
+		select * from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM questionBoardCmt2
+		        where qsb_cmt2_del = 'n' and qsb_id = #{qsbId} and qsb_cmt_id = #{qsbCmtId}
+		        START WITH qsb_cmt2_parent_id = -1
+		        CONNECT BY PRIOR qsb_cmt2_id = qsb_cmt2_parent_id 
+		        ORDER SIBLINGS BY qsb_cmt2_date DESC, qsb_cmt2_id DESC 
+		    )f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="select" parameterType="string" resultType="questionboardcmt2">
+		select * from questionBoardCmt2 where qsb_cmt2_id = #{id}
+	</select>
+	<update id="update" parameterType="questionboardcmt2">
+		update questionBoardCmt2
+		set qsb_cmt2_reply = #{qsb_cmt2_reply}, 
+		qsb_cmt2_del = #{qsb_cmt2_del},
+		qsb_cmt2_level = #{qsb_cmt2_level},
+		qsb_cmt2_parent_id = #{qsb_cmt2_parent_id}
+		where qsb_cmt2_id = #{qsb_cmt2_id}
+	</update>
+	<update id="deleteTreeByQsbCmtId" parameterType="string">
+		UPDATE questionBoardCmt2
+		SET qsb_cmt2_del = 'y'
+		WHERE qsb_cmt2_id IN (
+		    SELECT qsb_cmt2_id
+		    FROM questionBoardCmt2
+		    WHERE qsb_cmt_id = #{id}
+		)
+	</update>
+	<update id="deleteTreeByQsbId" parameterType="string">
+		UPDATE questionBoardCmt2
+		SET qsb_cmt2_del = 'y'
+		WHERE qsb_cmt2_id IN (
+		    SELECT qsb_cmt2_id
+		    FROM questionBoardCmt2
+		    WHERE qsb_id = #{id}
+		)
+	</update>
+	<update id="deleteTree" parameterType="string">
+		UPDATE questionBoardCmt2
+		SET qsb_cmt2_del = 'y'
+		WHERE qsb_cmt2_id IN (
+		    SELECT qsb_cmt2_id
+		    FROM questionBoardCmt2
+		    START WITH qsb_cmt2_id = #{id}
+		    CONNECT BY PRIOR qsb_cmt2_id = qsb_cmt2_parent_id
+		)
+	</update>
+</mapper>

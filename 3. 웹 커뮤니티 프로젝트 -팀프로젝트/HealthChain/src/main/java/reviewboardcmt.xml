@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="reviewboardcmtns">
+	<insert id="insert" parameterType="reviewboardcmt">
+		insert into reviewBoardCmt values (rvb_cmt_seq.nextval, #{user_id}, #{rvb_id}, #{rvb_cmt_reply}, sysdate, 'n', 'rvb_cmt')
+	</insert>
+	<select id="getTotalByRvbId" parameterType="string" resultType="integer">
+		select count(*) from reviewBoardCmt where rvb_cmt_del = 'n' and rvb_id = #{rvbId}
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from reviewBoardCmt where rvb_cmt_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getIndex" parameterType="map" resultType="integer">
+		SELECT rnum - 1
+		    FROM (
+		        SELECT reviewBoardCmt.*, ROW_NUMBER() OVER (ORDER BY rvb_cmt_date DESC, rvb_cmt_id desc) AS rnum
+		        FROM reviewBoardCmt
+		        WHERE rvb_cmt_del = 'n' and rvb_id = #{rvbId}
+		    )where rvb_cmt_id = #{rvbCmtId}
+	</select>
+	<select id="getCommentList" parameterType="map" resultType="reviewboardcmt">
+		SELECT * 
+		    FROM (
+		        SELECT reviewBoardCmt.*, ROW_NUMBER() OVER (ORDER BY rvb_cmt_date DESC, rvb_cmt_id desc) AS rnum
+		        FROM reviewBoardCmt
+		        WHERE rvb_cmt_del = 'n' and rvb_id = #{rvbId}
+		    )
+		WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+	</select>
+	<select id="getCommentListByUserId" parameterType="map" resultType="reviewboardcmt">
+		SELECT * 
+		    FROM (
+		        SELECT reviewBoardCmt.*, ROW_NUMBER() OVER (ORDER BY rvb_cmt_date DESC, rvb_cmt_id desc) AS rnum
+		        FROM reviewBoardCmt
+		        WHERE rvb_cmt_del = 'n' and user_id = #{id}
+		    )
+		WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+	</select>
+	<select id="select" parameterType="string" resultType="reviewboardcmt">
+		select * from reviewBoardCmt where rvb_cmt_id = #{id}
+	</select>
+	<update id="update" parameterType="reviewboardcmt">
+		update reviewBoardCmt set rvb_cmt_reply = #{rvb_cmt_reply}, rvb_cmt_del = #{rvb_cmt_del} where rvb_cmt_id = #{rvb_cmt_id}
+	</update>
+	<update id="deleteTreeByRvbId" parameterType="string">
+		UPDATE reviewBoardCmt
+		SET rvb_cmt_del = 'y'
+		WHERE rvb_cmt_id IN (
+		    SELECT rvb_cmt_id
+		    FROM reviewBoardCmt
+		    WHERE rvb_id = #{id}
+		)
+	</update>
+</mapper>

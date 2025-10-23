@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="db.properties" />
+	<typeAliases>
+		<typeAlias alias="customerservice" type="model.CustomerService" />
+		<typeAlias alias="doctorlicense" type="model.DoctorLicense" />
+		<typeAlias alias="freeboard" type="model.FreeBoard" />
+		<typeAlias alias="freeboardcmt" type="model.FreeBoardCmt" />
+		<typeAlias alias="mediinfoboard" type="model.MediInfoBoard" />
+		<typeAlias alias="questionboard" type="model.QuestionBoard" />
+		<typeAlias alias="questionboardcmt" type="model.QuestionBoardCmt" />
+		<typeAlias alias="questionboardcmt2" type="model.QuestionBoardCmt2" />
+		<typeAlias alias="reviewboard" type="model.ReviewBoard" />
+		<typeAlias alias="reviewboardcmt" type="model.ReviewBoardCmt" />
+		<typeAlias alias="searchboard" type="model.SearchBoard" />
+		<typeAlias alias="searchcomment" type="model.SearchComment" />
+		<typeAlias alias="users" type="model.Users" />
+	</typeAliases>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="customerservice.xml" />
+		<mapper resource="doctorlicense.xml" />
+		<mapper resource="freeboard.xml" />
+		<mapper resource="freeboardcmt.xml" />
+		<mapper resource="mediinfoboard.xml" />
+		<mapper resource="questionboard.xml" />
+		<mapper resource="questionboardcmt.xml" />
+		<mapper resource="questionboardcmt2.xml" />
+		<mapper resource="reviewboard.xml" />
+		<mapper resource="reviewboardcmt.xml" />
+		<mapper resource="searchboard.xml" />
+		<mapper resource="searchcomment.xml" />
+		<mapper resource="users.xml" />
+	</mappers>
+</configuration>

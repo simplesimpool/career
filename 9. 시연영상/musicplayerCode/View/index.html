@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Web Music Player</title>
+
+    <link rel="icon" href="/View/Images/tab-icon.svg">
+    <link rel="stylesheet" href="/View/Main-Frame/overall-frame.css">
+    <link rel="stylesheet" href="/View/Right-Side/Common/right-side-items-scroll-frame.css">
+    <link rel="stylesheet" href="/View/Left-Side/left-side-items.css">
+    <link rel="stylesheet" href="/View/Right-Side/Common/right-side-items.css">
+    <link rel="stylesheet" href="/View/Input/input.css">
+    <link rel="stylesheet" href="/View/Display/loading-style.css">
+    <link rel="stylesheet" href="/View/Display/error-style.css">
+    <link rel="stylesheet" href="/View/Right-Side/Bottom/audio-file-frame.css">
+    <link rel="stylesheet" href="/View/Right-Side/Top/audio-control-frames.css">
+    <link rel="stylesheet" href="/View/Right-Side/Top/audio-information-frames.css">
+    <link rel="stylesheet" href="/View/Right-Side/Top/audio-button-images.css">
+    <link rel="stylesheet" href="/View/Right-Side/Between/lyrics-frame.css">
+    <link rel="stylesheet" href="/View/Right-Side/Between/sentence-frame.css">
+  </head>
+  <body>
+    <div class="audio-popup-menu">
+      <div class="delete-song">Delete this song</div>
+    </div>
+    <div class="main-frame">
+      <div class="left-side-frame">
+        <div class="left-top-item-frame">
+          <div class="hover-message">Add Songs</div>
+          <img class="add-file-image" src="/View/Images/add-song.svg" type="file">
+          <input class="file-input" type="file" accept="audio/*" multiple>
+        </div>
+        <div class="left-item-frame">
+          <div class="hover-message">Add Folder</div>
+          <img class="add-folder-image" src="/View/Images/add-folder.svg">
+          <input class="folder-input" type="file" webkitdirectory>
+        </div>
+        <div class="left-item-frame">
+          <div class="hover-message">Generate AI Lyrics</div>
+          <img class="lyrics-image" src="/View/Images/lyrics.svg">
+        </div>
+        <div class="left-bottom-item-frame">
+          <div class="hover-message">Reset Size</div>
+          <img class="reset-image" src="/View/Images/reset.svg">
+        </div>
+      </div>
+      <div class="right-side-frame">
+        <div class="right-top-item-frame">
+          <div class="audio-information-frame">
+            <span class="audio-playing-time-frame">00:00 / 00:00</span>
+          </div>
+          <div class="audio-control-frame">
+            <input class="audio-progress-bar-input" type="range" min="0" max="100" value="0" step="0.01">
+            <div class="audio-button-container">
+              <img class="prev-song-button-image" src="/View/Images/prev-song-button.svg">
+              <img class="play-pause-song-button-image" src="/View/Images/play-song-button.svg">
+              <img class="stop-song-button-image" src="/View/Images/stop-song-button.svg">
+              <img class="next-song-button-image" src="/View/Images/next-song-button.svg">
+            </div>
+            <div class="audio-play-setting-container">
+              <img class="repeat-button-image" src="/View/Images/repeat-total-button.svg">
+              <img class="shuffle-button-image" src="/View/Images/shuffle-off-button.svg">
+            </div>
+            <div class="audio-volume-container">
+              <img class="volume-button-image" src="/View/Images/volume.svg">
+              <input class="volume-progress-bar-input" type="range" min="0" max="100" value="100" step="0.01">
+            </div>
+          </div>
+          <audio class="audio-player" ></audio>
+        </div>
+        <div class="right-middle-item-frame lyrics-frame"></div>
+        <div class="right-bottom-item-frame">
+          <div class="audio-file-frame-padding"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/Controller/Client/Document/add-delete-song-button.js"></script>
+    <script type="module" src="/Controller/Client/Document/control-audio-popup-menu.js"></script>
+    <script type="module" src="/Controller/Client/Main-Frame/control-main-frame.js"></script>
+    <script type="module" src="/Controller/Client/Right-Side/Common/control-right-side-items-frame.js"></script>
+    <script type="module" src="/Controller/Client/Left-Side/reset-right-side-items-frame.js"></script>
+    <script type="module" src="/Controller/Client/Left-Side/add-audio-files.js"></script>
+    <script type="module" src="/Controller/Client/Left-Side/load-folder.js"></script>
+    <script type="module" src="/Controller/Client/Right-Side/Top/control-audio-file.js"></script>
+    <script type="module" src="/Controller/Client/Right-Side/Top/audio-playing-setting.js"></script>
+    <script type="module" src="/Controller/Client/Right-Side/Top/audio-volume-settomg.js"></script>
+    <script type="module" src="/Controller/Client/Left-Side/generate-lyrics.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

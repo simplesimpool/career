@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="searchcommentns">
+	<select id="select" parameterType="string" resultType="searchcomment">
+		select f_qry.*, rownum as rnum from (
+		    select * from (
+		            select * from (
+		                select frb_cmt_id as cmt_id, user_id, frb_id as board_id, frb_cmt_reply as cmt_reply, frb_cmt_date as cmt_date,
+		                frb_cmt_del as cmt_del, frb_cmt_category as cmt_category
+		                from (select * from freeBoardCmt where frb_cmt_del = 'n' and user_id != 'admin' order by frb_cmt_date desc, frb_cmt_id desc)
+		                union all
+		                select rvb_cmt_id as cmt_id, user_id, rvb_id as board_id, rvb_cmt_reply as cmt_reply, rvb_cmt_date as cmt_date,
+		                rvb_cmt_del as cmt_del, rvb_cmt_category as cmt_category
+		                from (select * from reviewBoardCmt where rvb_cmt_del = 'n' and user_id != 'admin' order by rvb_cmt_date desc, rvb_cmt_id desc)
+		                union all 
+		                select qsb_cmt_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt_reply as cmt_reply, qsb_cmt_date as cmt_date,
+		                qsb_cmt_del as cmt_del, qsb_cmt_category as cmt_category
+		                from (select * from questionBoardCmt where qsb_cmt_del = 'n' and user_id != 'admin' order by qsb_cmt_date desc, qsb_cmt_id desc)
+		                union all
+		                select qsb_cmt2_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt2_reply as cmt_reply, qsb_cmt2_date as cmt_date,
+		                qsb_cmt2_del as cmt_del, qsb_cmt2_category as cmt_category
+		                from (select * from questionBoardCmt2 where qsb_cmt2_del = 'n' and user_id != 'admin' order by qsb_cmt2_date desc, qsb_cmt2_id desc)
+		            )
+		        )
+		)f_qry where cmt_id = #{id}
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from (
+		    select * from (
+		            select * from (
+		                select frb_cmt_id as cmt_id, user_id, frb_id as board_id, frb_cmt_reply as cmt_reply, frb_cmt_date as cmt_date,
+		                frb_cmt_del as cmt_del, frb_cmt_category as cmt_category
+		                from (select * from freeBoardCmt where frb_cmt_del = 'n' and user_id != 'admin' order by frb_cmt_date desc, frb_cmt_id desc)
+		                union all
+		                select rvb_cmt_id as cmt_id, user_id, rvb_id as board_id, rvb_cmt_reply as cmt_reply, rvb_cmt_date as cmt_date,
+		                rvb_cmt_del as cmt_del, rvb_cmt_category as cmt_category
+		                from (select * from reviewBoardCmt where rvb_cmt_del = 'n' and user_id != 'admin' order by rvb_cmt_date desc, rvb_cmt_id desc)
+		                union all 
+		                select qsb_cmt_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt_reply as cmt_reply, qsb_cmt_date as cmt_date,
+		                qsb_cmt_del as cmt_del, qsb_cmt_category as cmt_category
+		                from (select * from questionBoardCmt where qsb_cmt_del = 'n' and user_id != 'admin' order by qsb_cmt_date desc, qsb_cmt_id desc)
+		                union all
+		                select qsb_cmt2_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt2_reply as cmt_reply, qsb_cmt2_date as cmt_date,
+		                qsb_cmt2_del as cmt_del, qsb_cmt2_category as cmt_category
+		                from (select * from questionBoardCmt2 where qsb_cmt2_del = 'n' and user_id != 'admin' order by qsb_cmt2_date desc, qsb_cmt2_id desc)
+		            )
+		        )
+		)f_qry where user_id = #{id}
+	</select>
+	<select id="getQsbCmtTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from (
+		    select * from (
+		            select * from (
+		                select qsb_cmt_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt_reply as cmt_reply, qsb_cmt_date as cmt_date,
+		                qsb_cmt_del as cmt_del, qsb_cmt_category as cmt_category
+		                from (select * from questionBoardCmt where qsb_cmt_del = 'n' and user_id != 'admin' order by qsb_cmt_date desc, qsb_cmt_id desc)
+		                union all
+		                select qsb_cmt2_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt2_reply as cmt_reply, qsb_cmt2_date as cmt_date,
+		                qsb_cmt2_del as cmt_del, qsb_cmt2_category as cmt_category
+		                from (select * from questionBoardCmt2 where qsb_cmt2_del = 'n' and user_id != 'admin' order by qsb_cmt2_date desc, qsb_cmt2_id desc)
+		            )
+		        )
+		)f_qry where user_id = #{id}
+	</select>
+	<select id="getCommentListByUserId" parameterType="map" resultType="searchcomment" flushCache="true">
+		select * from(
+		    select f_qry.*, rownum as rnum from (
+		        select * from (
+		                select * from (
+		                    select frb_cmt_id as cmt_id, user_id, frb_id as board_id, frb_cmt_reply as cmt_reply, frb_cmt_date as cmt_date,
+		                    frb_cmt_del as cmt_del, frb_cmt_category as cmt_category
+		                    from (select * from freeBoardCmt where frb_cmt_del = 'n' and user_id != 'admin' order by frb_cmt_date desc, frb_cmt_id desc)
+		                    union all
+		                    select rvb_cmt_id as cmt_id, user_id, rvb_id as board_id, rvb_cmt_reply as cmt_reply, rvb_cmt_date as cmt_date,
+		                    rvb_cmt_del as cmt_del, rvb_cmt_category as cmt_category
+		                    from (select * from reviewBoardCmt where rvb_cmt_del = 'n' and user_id != 'admin' order by rvb_cmt_date desc, rvb_cmt_id desc)
+		                    union all 
+		                    select qsb_cmt_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt_reply as cmt_reply, qsb_cmt_date as cmt_date,
+		                    qsb_cmt_del as cmt_del, qsb_cmt_category as cmt_category
+		                    from (select * from questionBoardCmt where qsb_cmt_del = 'n' and user_id != 'admin' order by qsb_cmt_date desc, qsb_cmt_id desc)
+		                    union all
+		                    select qsb_cmt2_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt2_reply as cmt_reply, qsb_cmt2_date as cmt_date,
+		                    qsb_cmt2_del as cmt_del, qsb_cmt2_category as cmt_category
+		                    from (select * from questionBoardCmt2 where qsb_cmt2_del = 'n' and user_id != 'admin' order by qsb_cmt2_date desc, qsb_cmt2_id desc)
+		                )
+		            )
+		    )f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getQsbCommentListByUserId" parameterType="map" resultType="searchcomment" flushCache="true">
+		select * from(
+		    select f_qry.*, rownum as rnum from (
+		        select * from (
+		                select * from (
+		                    select qsb_cmt_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt_reply as cmt_reply, qsb_cmt_date as cmt_date,
+		                    qsb_cmt_del as cmt_del, qsb_cmt_category as cmt_category
+		                    from (select * from questionBoardCmt where qsb_cmt_del = 'n' and user_id != 'admin' order by qsb_cmt_date desc, qsb_cmt_id desc)
+		                    union all
+		                    select qsb_cmt2_id as cmt_id, user_id, qsb_id as board_id, qsb_cmt2_reply as cmt_reply, qsb_cmt2_date as cmt_date,
+		                    qsb_cmt2_del as cmt_del, qsb_cmt2_category as cmt_category
+		                    from (select * from questionBoardCmt2 where qsb_cmt2_del = 'n' and user_id != 'admin' order by qsb_cmt2_date desc, qsb_cmt2_id desc)
+		                )
+		            )
+		    )f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+</mapper>

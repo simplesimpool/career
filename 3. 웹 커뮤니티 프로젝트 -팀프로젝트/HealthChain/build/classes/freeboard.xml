@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="freeboardns">
+	<insert id="insert" parameterType="freeboard">
+		insert into freeBoard values(frb_seq.nextval, #{user_id}, #{frb_title}, #{frb_content}, sysdate, 0, 'n', 'frb')
+	</insert>
+	<select id="getTotal" resultType="integer">
+		select count(*) from freeBoard where frb_del = 'n'
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from freeBoard where frb_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getNoticeTotal" resultType="integer">
+		select count(*) from freeBoard where frb_del = 'n' and user_id = 'admin'
+	</select>
+	<select id="getIndex" parameterType="string" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id = 'admin' order by frb_reg_date desc, frb_id desc)
+		            union all
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		        )
+		    ) f_qry
+		)where frb_id = #{id}
+	</select>
+	<select id="getBoardList" parameterType="map" resultType="freeboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id = 'admin' order by frb_reg_date desc, frb_id desc)
+		            union all
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByUserId" parameterType="map" resultType="freeboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id = 'admin' order by frb_reg_date desc, frb_id desc)
+		            union all
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		        )
+		    ) f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByNotice" parameterType="map" resultType="freeboard">
+		select * from (
+		    select f_qry.*, rownum as rnum from (
+		        select * from (
+		            select * from (select * from freeBoard where frb_del = 'n' and user_id = 'admin' order by frb_reg_date desc, frb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="select" parameterType="string" resultType="freeboard">
+		select * from freeBoard where frb_id = #{id}
+	</select>
+	<update id="update" parameterType="freeboard">
+		update freeBoard set 
+		frb_title = #{frb_title},
+		frb_content = #{frb_content},
+		frb_view_cnt = #{frb_view_cnt},
+		frb_del = #{frb_del}
+		where frb_id = #{frb_id}
+	</update>
+</mapper>

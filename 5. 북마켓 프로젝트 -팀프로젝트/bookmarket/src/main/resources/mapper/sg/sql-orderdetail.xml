@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookmarket.app.mapper.sg.OrderDetailMapperSG">
+	<select id="getOrderDetailedBookListByOrderId" parameterType="map" resultType="BookSG">
+		select * from (
+		    select od1.*, rownum as rnum from (
+		        select * from OrderDetail where order_id = #{orderId}
+		    ) od1
+		) od2, Book b where od2.book_id = b.book_id and rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getOrderDetailListByOrderId" parameterType="map" resultType="OrderDetailSG">
+		select * from (
+		    select od.*, rownum as rnum from (
+		        select * from OrderDetail where order_id = #{orderId}
+		    ) od
+		) where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getTotalByOrderId" parameterType="integer" resultType="integer">
+		select count(*) from OrderDetail where order_id = #{orderId}
+	</select>
+	<insert id="insertBooks" parameterType="map">
+		insert all
+			into Orders values (order_seq.NEXTVAL, #{userId}, sysdate, 'n', 'n', 'n', 
+			(select nvl(sum(c.book_cnt * b.book_price), 0) from Cart c, Book b where b.book_id = c.book_id and user_id = #{userId} and cart_del = 'n')) 
+		<foreach collection="allBookList" item="book" close="select * from dual" separator=" ">
+			into OrderDetail values (get_od_seq_nextval(), #{book.bookId}, order_seq.CURRVAL, #{book.bookCnt})
+		</foreach>
+	</insert>
+</mapper>

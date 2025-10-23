@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="customerservicens">
+	<insert id="insert" parameterType="customerservice">
+		insert into customerService values(cs_seq.nextval, #{user_id}, #{cs_title}, #{cs_content}, sysdate, 0, 'n', 0, -1, 'cs')
+	</insert>
+	<insert id="reply" parameterType="customerservice">
+		insert into customerService values(cs_seq.nextval, #{user_id}, #{cs_title}, #{cs_content}, sysdate, 0, 'n', #{cs_level}, #{cs_parent_id}, 'cs')
+	</insert>
+	<select id="select" parameterType="string" resultType="customerservice">
+		select * from customerService where cs_id = #{id}
+	</select>
+	<update id="deleteTree" parameterType="string">
+		UPDATE customerService
+		SET cs_del = 'y'
+		WHERE cs_id IN (
+		    SELECT cs_id
+		    FROM customerService
+		    START WITH cs_id = #{id}  -- 루트 노드를 지정 (최상위 관리자)
+		    CONNECT BY PRIOR cs_id = cs_parent_id  -- 부모-자식 관계를 정의
+		)
+	</update>
+	<update id="update" parameterType="customerservice">
+		update customerService set 
+		cs_title = #{cs_title},
+		cs_content = #{cs_content},
+		cs_view_cnt = #{cs_view_cnt},
+		cs_del = #{cs_del},
+		cs_level = #{cs_level},
+		cs_parent_id = #{cs_parent_id}
+		where cs_id = #{cs_id}
+	</update>
+	<select id="getTotal" resultType="integer">
+		select count(*) from customerService where cs_del = 'n'
+	</select>
+	<select id="getTotalByReply" resultType="integer">
+		select count(*) from customerService where user_id = 'admin' and cs_level > 0 and cs_del = 'n'
+	</select>
+	<select id="getTotalByNotice" resultType="integer">
+		select count(*) from customerService where user_id = 'admin' and cs_level = 0 and cs_del = 'n'
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from customerService where cs_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getBoardList" parameterType="map" resultType="customerservice">
+		select * from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM (
+		            SELECT * FROM customerService
+		            WHERE user_id = 'admin' AND cs_level = 0 AND cs_del = 'n'
+		            ORDER BY cs_reg_date DESC, cs_id DESC
+		        )
+		        UNION ALL
+		        select * from (
+		            SELECT * FROM customerService 
+		            where not (user_id = 'admin' and cs_level = 0) and cs_del = 'n'
+		            START WITH cs_parent_id = -1
+		            CONNECT BY PRIOR CS_ID = CS_PARENT_ID
+		            ORDER SIBLINGS BY cs_reg_date DESC, cs_id DESC
+		        )
+		    )f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByNotice" parameterType="map" resultType="customerservice">
+		select * from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM (
+		            SELECT * FROM customerService
+		            WHERE user_id = 'admin' AND cs_level = 0 AND cs_del = 'n'
+		            ORDER BY cs_reg_date DESC, cs_id DESC
+		        )
+		    )f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByReply" parameterType="map" resultType="customerservice">
+		select * from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM (
+		            SELECT * FROM customerService
+		            WHERE user_id = 'admin' AND cs_level > 0 AND cs_del = 'n'
+		            ORDER BY cs_reg_date DESC, cs_id DESC
+		        )
+		    )f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByUserId" parameterType="map" resultType="customerservice">
+		select * from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM (
+		            SELECT * FROM customerService
+		            WHERE user_id = 'admin' AND cs_level = 0 AND cs_del = 'n'
+		            ORDER BY cs_reg_date DESC, cs_id DESC
+		        )
+		        UNION ALL
+		        select * from (
+		            SELECT * FROM customerService 
+		            where not (user_id = 'admin' and cs_level = 0) and cs_del = 'n'
+		            START WITH cs_parent_id = -1
+		            CONNECT BY PRIOR CS_ID = CS_PARENT_ID
+		            ORDER SIBLINGS BY cs_reg_date DESC, cs_id DESC 
+		        )
+		    )f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getIndex" parameterType="string" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum from (
+		        SELECT * FROM (
+		            SELECT * FROM customerService
+		            WHERE user_id = 'admin' AND cs_level = 0 AND cs_del = 'n'
+		            ORDER BY cs_reg_date DESC, cs_id DESC
+		        )
+		        UNION ALL
+		        select * from (
+		            SELECT * FROM customerService 
+		            where not (user_id = 'admin' and cs_level = 0) and cs_del = 'n'
+		            START WITH cs_parent_id = -1 
+		            CONNECT BY PRIOR CS_ID = CS_PARENT_ID
+		            ORDER SIBLINGS BY cs_reg_date DESC, cs_id DESC
+		        )
+		    )f_qry
+		)where cs_id = #{id}
+	</select>
+</mapper>

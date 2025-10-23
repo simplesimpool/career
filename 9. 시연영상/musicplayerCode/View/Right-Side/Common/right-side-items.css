@@ -1,0 +1,31 @@
+.right-top-item-frame {
+    position: relative;
+    width: 100%;
+    background: red;
+    border-top-right-radius: var(--common-border-width);
+    /* overflow: auto; */
+    height: 0px;/*The Height is necessary to initialize*/
+    min-height: 30%;
+    max-height: 30%;
+}
+
+.right-middle-item-frame {
+    position: relative;
+    width: 100%;
+    background: green;
+    overflow-y: auto;
+    height: 0px;/*The Height is necessary to initialize*/
+    min-height: 20%;
+    max-height: 20%;
+}
+
+.right-bottom-item-frame {
+    position: relative;
+    width: 100%;
+    height: 0px;/*The Height is necessary to initialize*/
+    background: gray;
+    border-bottom-right-radius: var(--common-border-width);
+    min-height: 10%;
+    max-height: 100%;
+    overflow: auto;
+}

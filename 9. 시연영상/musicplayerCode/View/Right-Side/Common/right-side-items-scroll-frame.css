@@ -1,0 +1,24 @@
+.right-item-top-scroll-bar {
+    position: absolute;
+    width: 100%;
+    height: var(--common-border-width);
+    background-color: white;
+    top: 0px;
+}
+
+.right-item-top-scroll-bar:hover {
+    cursor:ns-resize;
+}
+
+.right-item-bottom-scroll-bar {
+    position: absolute;
+    width: 100%;
+    height: var(--common-border-width);
+    background-color: black;
+    bottom: 0px;
+}
+
+.right-item-bottom-scroll-bar:hover {
+    cursor:ns-resize;
+}
+

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="questionboardns">
+	<select id="select" parameterType="string" resultType="questionboard">
+		select * from questionBoard where qsb_id = #{id}
+	</select>
+	<insert id="insert" parameterType="questionboard">
+		insert into questionBoard values(qsb_seq.nextval, #{user_id}, #{qsb_title}, #{qsb_content}, sysdate, 0, 'n', 'qsb')
+	</insert>
+	<select id="getTotal" resultType="integer">
+		select count(*) from questionBoard where qsb_del = 'n'
+	</select>
+	<select id="getNoticeTotal" resultType="integer">
+		select count(*) from questionBoard where qsb_del = 'n' and user_id = 'admin'
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from questionBoard where qsb_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getIndex" parameterType="string" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id = 'admin' order by qsb_reg_date desc, qsb_id desc)
+		            union all
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		        )
+		    ) f_qry
+		)where qsb_id = #{id}
+	</select>
+	<select id="getBoardList" parameterType="map" resultType="questionboard" flushCache="true">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id = 'admin' order by qsb_reg_date desc, qsb_id desc)
+		            union all
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByUserId" parameterType="map" resultType="questionboard" flushCache="true">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id = 'admin' order by qsb_reg_date desc, qsb_id desc)
+		            union all
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		        )
+		    ) f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByNotice" parameterType="map" resultType="questionboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from questionBoard where qsb_del = 'n' and user_id = 'admin' order by qsb_reg_date desc, qsb_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<update id="update" parameterType="questionboard">
+		update questionBoard set 
+		qsb_title = #{qsb_title},
+		qsb_content = #{qsb_content},
+		qsb_view_cnt = #{qsb_view_cnt},
+		qsb_del = #{qsb_del}
+		where qsb_id = #{qsb_id}
+	</update>
+</mapper>

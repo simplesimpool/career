@@ -1,0 +1,23 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="csBoardUpdate.sg" method="post">
+	<input type="hidden" name="page" value="${page }">
+	<input type="hidden" name="id" value="${cs.getCs_id() }">
+	작성자 : <input type="text" value="${user.getUser_nickname() }" readonly="readonly"><br>
+	글제목 : <input type="text" name="title" value="${cs.getCs_title() }" required="required" autofocus="autofocus"><br>
+	글내용 : <input type="text" name="content" value="${cs.getCs_content() }" required="required" autofocus="autofocus"><br>
+	<input type="submit" value="수정">
+</form>
+<br>
+page : ${page }<br>
+userId : ${user.getUser_id() }<br>
+csId : ${cs.getCs_id() }<br>
+</body>
+</html>

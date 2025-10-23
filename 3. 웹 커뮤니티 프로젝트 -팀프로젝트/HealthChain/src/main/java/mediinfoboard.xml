@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mediinfoboardns">
+	<select id="select" parameterType="string" resultType="mediinfoboard">
+		select * from mediInfoBoard where mib_id = #{id}
+	</select>
+	<insert id="insert" parameterType="mediinfoboard">
+		insert into mediInfoBoard values(mib_seq.nextval, #{user_id}, #{mib_title}, #{mib_content}, sysdate, 0, 'n', 'mib')
+	</insert>
+	<select id="getTotal" resultType="integer">
+		select count(*) from mediInfoBoard where mib_del = 'n'
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from mediInfoBoard where mib_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getNoticeTotal" resultType="integer">
+		select count(*) from mediInfoBoard where mib_del = 'n' and user_id = 'admin'
+	</select>
+	<select id="getIndex" parameterType="string" resultType="integer">
+		select rnum - 1 from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id = 'admin' order by mib_reg_date desc, mib_id desc)
+		            union all
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		        )
+		    ) f_qry
+		)where mib_id = #{id}
+	</select>
+	<select id="getBoardListByNotice" parameterType="map" resultType="mediinfoboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id = 'admin' order by mib_reg_date desc, mib_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByUserId" parameterType="map" resultType="mediinfoboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id = 'admin' order by mib_reg_date desc, mib_id desc)
+		            union all
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		        )
+		    ) f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardList" parameterType="map" resultType="mediinfoboard">
+		select * from (
+		    select f_qry.*, rownum as rnum
+		    from (
+		        select * from (
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id = 'admin' order by mib_reg_date desc, mib_id desc)
+		            union all
+		            select * from (select * from mediInfoboard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		        )
+		    ) f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<update id="update" parameterType="mediinfoboard">
+		update mediInfoBoard set 
+		mib_title = #{mib_title},
+		mib_content = #{mib_content},
+		mib_view_cnt = #{mib_view_cnt},
+		mib_del = #{mib_del}
+		where mib_id = #{mib_id}
+	</update>
+</mapper>

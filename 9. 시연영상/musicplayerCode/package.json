@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "@deepgram/sdk": "^3.5.0",
+    "@google-cloud/speech": "^6.7.0",
+    "assemblyai": "^4.6.1",
+    "axios": "^1.7.3",
+    "cors": "^2.8.5",
+    "deepspeech": "^0.9.3",
+    "express": "^4.19.2",
+    "form-data": "^4.0.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.7",
+    "openai": "^4.54.0",
+    "serve-favicon": "^2.5.0",
+    "speechmatics": "^4.0.0"
+  },
+  "name": "webmusicplayer",
+  "version": "1.0.0",
+  "description": "This is a WebMusicPlayer.\r # Supported Browser\r Chrome(or others similar to like chrome maybe).\r # Description\r ![suffle-on-button](View/ForReadMeImages/resized-shuffle-on-button.svg) \r This is the shuffle on button.The next song will be played randomly.",
+  "main": "Model/Server/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node Model/Server/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

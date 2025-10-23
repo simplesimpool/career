@@ -1,0 +1,123 @@
+@charset "UTF-8";
+
+#cart-container {
+	position: relative;
+	border: 1px solid black;
+}
+
+#page-container {
+	position: relative;
+	border: 1px solid black;
+	text-align: center;
+}
+
+#order-form-container {
+	position: relative;
+	border: 1px solid black;
+	align-content: center;
+	text-align: center;
+}
+
+#prev-page-btn {
+	cursor: pointer;
+}
+
+#cur-page-btn {
+	text-decoration: underline;
+}
+
+.page-btn {
+	cursor: pointer;
+}
+
+#next-page-btn {
+	cursor: pointer;
+}
+
+.book-container {
+	position: relative;
+	border: 1px solid black;
+}
+
+.book-img-container {
+	border: 1px solid black;
+	width: 20%;
+	display: inline-block;
+}
+
+.book-img {
+	border: 1px solid black;
+	width: 100%;
+	height: 100%;
+}
+
+.book-desc-container {
+	position: absolute;
+	display: inline-block;
+	border: 1px solid black;
+	height: 100%;
+	width: 40%;
+	text-align: center;
+	align-content: center;
+}
+
+.book-delete-container {
+	position: absolute;
+	right: 0px;
+	display: inline-block;
+	border: 1px solid black;
+	text-align: center;
+	height: 100%;
+	align-content: center;
+}
+
+.book-delete-btn {
+	border: 1px solid black;
+	cursor: pointer;
+}
+
+.book-request-container {
+	position: absolute;
+	display: inline-block;
+	border: 1px solid black;
+	text-align: center;
+	left: 63%;
+	height: 100%;
+	width: 18%;
+	align-content: center;
+}
+
+.book-request-price-container {
+	border: 1px solid black;
+	text-align: center;
+	align-content: center;
+}
+
+.book-cnt-display-container {
+	border: 1px solid black;
+	text-align: center;
+	align-content: center;
+	display: inline-block;
+	font-size: 7%;
+}
+
+.book-req-cnt-input {
+	display: inline-block;
+	border: 1px solid black;
+	align-content: center;
+	text-align: center;
+	margin: 0 auto;
+}
+
+#total-order-display-container {
+	border: 1px solid black;
+	align-content: center;
+	text-align: center;
+}
+
+#order-btn {
+	border: 1px solid black;
+	align-content: center;
+	text-align: center;
+	cursor: pointer;
+}

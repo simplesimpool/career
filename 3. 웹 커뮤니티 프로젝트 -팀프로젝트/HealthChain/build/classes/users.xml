@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="usersns">
+<select id="getTotal" resultType="integer">
+	select count(*) from users where user_del = 'n' and user_id != 'admin'
+</select>
+<select id="getNormalUserTotal" resultType="integer">
+	select count(*) from users where dr_lic_code is null and user_del = 'n' and user_id != 'admin'
+</select>
+<select id="getDoctorUserTotal" resultType="integer">
+	select count(*) from users where dr_lic_code is not null and user_del = 'n' and user_id != 'admin'
+</select>
+<select id="getResignedUserTotal" resultType="integer">
+	select count(*) from users where user_del = 'y' and user_id != 'admin'
+</select>
+<select id="getBoardList" parameterType="map" resultType="users" flushCache="true">
+	SELECT *
+	    FROM (
+	        SELECT users.*, ROW_NUMBER() OVER (ORDER BY user_reg_date DESC, user_id DESC) AS rnum
+	        FROM users
+	        WHERE user_del = 'n' and user_id != 'admin'
+	    )
+	WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+</select>
+<select id="getBoardListByNormalUser" parameterType="map" resultType="users" flushCache="true">
+	SELECT *
+	    FROM (
+	        SELECT users.*, ROW_NUMBER() OVER (ORDER BY user_reg_date DESC, user_id DESC) AS rnum
+	        FROM users
+	        where dr_lic_code is null and user_del = 'n' and user_id != 'admin'
+	    )
+	WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+</select>
+<select id="getBoardListByDoctorUser" parameterType="map" resultType="users" flushCache="true">
+	SELECT *
+	    FROM (
+	        SELECT users.*, ROW_NUMBER() OVER (ORDER BY user_reg_date DESC, user_id DESC) AS rnum
+	        FROM users
+	        where dr_lic_code is not null and user_del = 'n' and user_id != 'admin'
+	    )
+	WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+</select>
+<select id="getBoardListByResignedUser" parameterType="map" resultType="users" flushCache="true">
+	SELECT *
+	    FROM (
+	        SELECT users.*, ROW_NUMBER() OVER (ORDER BY user_reg_date DESC, user_id DESC) AS rnum
+	        FROM users
+	        where user_del = 'y' and user_id != 'admin'
+	    )
+	WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+</select>
+<select id="select" parameterType="string" resultType="users"> 
+	select * from users where user_id=#{id} 
+</select>
+<select id="selectByDrCode" parameterType="string" resultType="users"> 
+	select * from users where dr_lic_code=#{code} 
+</select>
+<select id="selectByNickName" parameterType="string" resultType="users">
+ 	select * from users where user_nickname=#{nickName} 
+</select>
+<select id="selectByEmail" parameterType="string" resultType="users">
+ 	select * from users where user_email=#{email} 
+</select>
+<select id="selectByTel" parameterType="string" resultType="users">
+ 	select * from users where user_tel=#{tel} 
+</select>
+<update id="update" parameterType="users">
+	update users set 
+	user_pw = #{user_pw},
+	user_name = #{user_name},
+	user_tel = #{user_tel},
+	user_addr = #{user_addr},
+	user_del = #{user_del},
+	user_nickname = #{user_nickname},
+	user_email = #{user_email},
+	user_activity = #{user_activity}
+	where user_id = #{user_id}
+</update>
+<insert id="insert" parameterType="users"> 
+	insert into users values (
+		#{user_id}, 
+		#{dr_lic_code}, 
+		#{user_pw}, 
+		#{user_name}, 
+		#{user_tel}, 
+		#{user_addr}, 
+		'n', 
+		#{user_nickname}, 
+		sysdate,
+		#{user_email}, 
+		'n'
+	) 
+</insert>
+</mapper>

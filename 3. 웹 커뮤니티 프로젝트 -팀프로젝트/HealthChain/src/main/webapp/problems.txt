@@ -1,0 +1,6 @@
+try catch dao쪽에 사용하기
+userUpdate or userSign update or insert 주의하기
+dao 쪽 겹치는 메서드는 Object PARAMETER등을 통해 해결하기
+javascript async 동기화 필수
+sql 쪽에 order by 최신날짜 기준에 pk에 의한 정렬 추가하기
+CheckUserActivityServlet를 common 패키지 같은 공통패키지에 넣은 다음 1개만 만들어서 쓰기

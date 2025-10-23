@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="freeboardcmtns">
+	<insert id="insert" parameterType="freeboardcmt">
+		insert into freeBoardCmt values (frb_cmt_seq.nextval, #{user_id}, #{frb_id}, #{frb_cmt_reply}, sysdate, 'n', 'frb_cmt')
+	</insert>
+	<select id="getTotalByFrbId" parameterType="string" resultType="integer">
+		select count(*) from freeBoardCmt where frb_cmt_del = 'n' and frb_id = #{frbId}
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from freeBoardCmt where frb_cmt_del = 'n' and user_id = #{id}
+	</select>
+	<select id="getIndex" parameterType="map" resultType="integer">
+		SELECT rnum - 1
+		    FROM (
+		        SELECT freeBoardCmt.*, ROW_NUMBER() OVER (ORDER BY frb_cmt_date DESC, frb_cmt_id desc) AS rnum
+		        FROM freeBoardCmt
+		        WHERE frb_cmt_del = 'n' and frb_id = #{frbId}
+		    )where frb_cmt_id = #{frbCmtId}
+	</select>
+	<select id="getCommentList" parameterType="map" resultType="freeboardcmt">
+		SELECT * 
+		    FROM (
+		        SELECT freeBoardCmt.*, ROW_NUMBER() OVER (ORDER BY frb_cmt_date DESC, frb_cmt_id desc) AS rnum
+		        FROM freeBoardCmt
+		        WHERE frb_cmt_del = 'n' and frb_id = #{frbId}
+		    )
+		WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+	</select>
+	<select id="getCommentListByUserId" parameterType="map" resultType="freeboardcmt">
+		SELECT * 
+		    FROM (
+		        SELECT freeBoardCmt.*, ROW_NUMBER() OVER (ORDER BY frb_cmt_date DESC, frb_cmt_id desc) AS rnum
+		        FROM freeBoardCmt
+		        WHERE frb_cmt_del = 'n' and user_id = #{id}
+		    )
+		WHERE rnum BETWEEN #{startIdx} AND #{endIdx}
+	</select>
+	<select id="select" parameterType="string" resultType="freeboardcmt">
+		select * from freeBoardCmt where frb_cmt_id = #{id}
+	</select>
+	<update id="update" parameterType="freeboardcmt">
+		update freeBoardCmt set frb_cmt_reply = #{frb_cmt_reply}, frb_cmt_del = #{frb_cmt_del} where frb_cmt_id = #{frb_cmt_id}
+	</update>
+	<update id="deleteTreeByFrbId" parameterType="string">
+		UPDATE freeBoardCmt
+		SET frb_cmt_del = 'y'
+		WHERE frb_cmt_id IN (
+		    SELECT frb_cmt_id
+		    FROM freeBoardCmt
+		    WHERE frb_id = #{id}
+		)
+	</update>
+</mapper>

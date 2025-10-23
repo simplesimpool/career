@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookmarket.app.mapper.sw.BookMapperSW">
+
+<insert id="insertBook" parameterType="map">
+    insert all 
+    into Book values 
+    ((select count(*) from Book) + 1, #{bsc.bscId}, #{book.bookPrice}, #{book.bookName}, #{book.bookWriter} , #{book.bookDesc} , #{book.bookIndex}, #{book.bookPubCmt},
+    #{bsr.bsrCnt}, sysdate, #{book.bookImg}, #{book.bookPage}, #{book.bookSize}, #{book.bookIsbn}, 'n', 0)
+    into BookSellRequest values 
+    ((select count(*) from BookSellRequest) + 1, (select count(*) from Book) + 1, #{pubId} , #{bsr.bsrCnt},'n', sysdate, '', '') 
+	select * from dual
+</insert>	
+
+</mapper>

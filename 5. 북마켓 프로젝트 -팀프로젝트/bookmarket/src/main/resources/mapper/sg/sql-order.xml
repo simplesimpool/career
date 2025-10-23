@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookmarket.app.mapper.sg.OrderMapperSG">
+	<select id="getRejectOrderBookListByUserId" parameterType="map" resultType="BookSG">
+		select * from (
+		    select o1.*, rownum as rnum from (
+		        select * from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'n' and order_reject = 'y'
+		        order by order_date desc, order_id desc
+		    ) o1
+		) o2, OrderDetail od, Book b 
+		where o2.order_id = od.order_id and od.book_id = b.book_id and rnum between #{startIdx} and #{endIdx} 
+		order by o2.order_id desc, od.od_id asc
+	</select>
+	<select id="getRejectOrderListByUserId" parameterType="map" resultType="OrderSG">
+		select * from (
+		    select o.*, rownum as rnum from (
+		        select * from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'n' and order_reject = 'y'
+		        order by order_date desc, order_id desc
+		    ) o
+		) where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getRejectOrderTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'n' and order_reject = 'y'
+	</select>
+	<update id="decBooksStockByOrderId" parameterType="integer">
+		update Book b set b.book_stock = 
+	    b.book_stock - nvl((select od.odr_cnt from OrderDetail od, Orders o
+	    where b.book_id = od.book_id and od.order_id = o.order_id and o.order_id = #{orderId}), 0)
+	</update>
+	<select id="getZeroStkOrOverReqBookListByOrderId" parameterType="integer" resultType="BookSG">
+		select * from Orders o, OrderDetail od, Book b
+		where o.order_id = #{orderId} 
+		and o.order_id = od.order_id and od.book_id = b.book_id
+		and (od.odr_cnt > b.book_stock or b.book_stock = 0)
+	</select>
+	<update id="update" parameterType="OrderSG">
+		update Orders set order_del = #{orderDel}, order_confirm = #{orderConfirm}, order_reject = #{orderReject}
+		where order_id = #{orderId}
+	</update>
+	<select id="getReqOrderList" parameterType="map" resultType="OrderSG">
+		select * from (
+		    select ord.*, rownum as rnum from (
+		        select * from Orders
+		        where order_del = 'n' and order_confirm = 'n' and order_reject = 'n'
+		        order by order_date desc, order_id desc
+		    ) ord
+		) where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getReqOrderTotal" resultType="integer">
+		select count(*) from Orders
+		where order_del = 'n' and order_confirm = 'n' and order_reject = 'n'
+		order by order_date desc, order_id desc
+	</select>
+	<update id="updateByUserId" parameterType="map">
+		update Orders set
+		order_del = #{order.orderDel},
+		order_confirm = #{order.orderConfirm}
+		where order_id = #{order.orderId} and user_id = #{userId}
+	</update>
+	<select id="getAcptedOrderListByUserId" parameterType="map" resultType="OrderSG">
+		select * from (
+		    select ord1.*, rownum as rnum from (
+		        select * from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'y' and order_reject = 'n'
+		        order by order_date desc, order_id desc
+		    ) ord1
+		) where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getAcptedOrderBookListByUserId" parameterType="map" resultType="BookSG">
+		select * from (
+		    select ord1.*, rownum as rnum from (
+		        select * from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'y' and order_reject = 'n'
+		        order by order_date desc, order_id desc
+		    ) ord1
+		) ord2, OrderDetail od, Book b 
+		where ord2.order_id = od.order_id and od.book_id = b.book_id and rnum between #{startIdx} and #{endIdx} 
+		order by ord2.order_id desc, od.od_id asc
+	</select>
+	<select id="getAcptedOdrTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from Orders
+		where user_id = #{userId} and order_del = 'n' and order_confirm = 'y' and order_reject = 'n'
+	</select>
+	<select id="getReqOrderListByUserId" parameterType="map" resultType="OrderSG">
+		select * from (
+		    select ord1.*, rownum as rnum from (
+		        select * from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'n' and order_reject = 'n'
+		        order by order_date desc, order_id desc
+		    ) ord1
+		) where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getReqOrderBookListByUserId" parameterType="map" resultType="BookSG">
+		select * from (
+		    select ord1.*, rownum as rnum from (
+		        select * from Orders where user_id = #{userId} and order_del = 'n' and order_confirm = 'n' and order_reject = 'n'
+		        order by order_date desc, order_id desc
+		    ) ord1
+		) ord2, OrderDetail od, Book b where ord2.order_id = od.order_id and od.book_id = b.book_id 
+		and rnum between #{startIdx} and #{endIdx} order by ord2.order_id desc, od.od_id asc
+	</select>
+	<select id="getReqOdrTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from Orders 
+		where user_id = #{userId} and order_del = 'n' and order_confirm = 'n' and order_reject = 'n'
+	</select>
+	<select id="select" parameterType="integer" resultType="OrderSG">
+		select * from Orders where order_id = #{id}
+	</select>
+	<select id="getTotal">
+		select count(*) from Orders
+	</select>
+	<insert id="insert" parameterType="OrderSG">
+		insert into Orders values (
+			(select count(*) from Orders) + 1,
+			#{userId},
+			sysdate,
+			'n',
+			'n',
+			'n'
+		)
+	</insert>
+</mapper>

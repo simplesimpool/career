@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="searchboardns">
+	<select id="select" parameterType="string" resultType="searchboard">
+		select f_qry.*, rownum as rnum from (
+		    select * from (
+		            select * from (
+		                select frb_id id, user_id, frb_title title, frb_content content,
+		                frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		                union all
+		                select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                from (select * from customerService where cs_del = 'n' and user_id != 'admin' order by cs_reg_date desc, cs_id desc)
+		                union all
+		                select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                from (select * from mediInfoBoard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		                union all
+		                select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                union all
+		                select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                from (select * from reviewBoard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            )
+		        )
+		)f_qry where id = #{id}
+	</select>
+	<select id="getTotalByKeyWord" parameterType="string" resultType="integer">
+		select count(*) from (
+		    select * from (
+		            select * from (
+		                select frb_id id, user_id, frb_title title, frb_content content,
+		                frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		                union all
+		                select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                from (select * from customerService where cs_del = 'n' and user_id != 'admin' order by cs_reg_date desc, cs_id desc)
+		                union all
+		                select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                from (select * from mediInfoBoard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		                union all
+		                select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                union all
+		                select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                from (select * from reviewBoard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            )
+		        )
+		)f_qry where title like '%' || #{keyWord} || '%' or content like '%' || #{keyWord} || '%'
+	</select>
+	<select id="getTotalByUserId" parameterType="string" resultType="integer">
+		select count(*) from (
+		    select * from (
+		            select * from (
+		                select frb_id id, user_id, frb_title title, frb_content content,
+		                frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		                union all
+		                select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                from (select * from customerService where cs_del = 'n' and user_id != 'admin' order by cs_reg_date desc, cs_id desc)
+		                union all
+		                select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                from (select * from mediInfoBoard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		                union all
+		                select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                union all
+		                select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                from (select * from reviewBoard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            )
+		        )
+		)f_qry where user_id = #{id}
+	</select>
+	<select id="getNoticeTotal" resultType="integer">
+		select count(*) from (
+		    select * from (
+		            select * from (
+		                select frb_id id, user_id, frb_title title, frb_content content,
+		                frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                from (select * from freeBoard where frb_del = 'n' and user_id = 'admin' order by frb_reg_date desc, frb_id desc)
+		                union all
+		                select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                from (select * from customerService where cs_del = 'n' and user_id = 'admin' and cs_level = 0 order by cs_reg_date desc, cs_id desc)
+		                union all
+		                select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                from (select * from mediInfoBoard where mib_del = 'n' and user_id = 'admin' order by mib_reg_date desc, mib_id desc)
+		                union all
+		                select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                from (select * from questionBoard where qsb_del = 'n' and user_id = 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                union all
+		                select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                from (select * from reviewBoard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		            )
+		        )
+		)f_qry
+	</select>
+	<select id="getBoardListByNotice" parameterType="map" resultType="searchboard" flushCache="true">
+		select * from(
+		    select f_qry.*, rownum as rnum from (
+		        select * from (
+		                select * from (
+		                    select frb_id id, user_id, frb_title title, frb_content content,
+		                    frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                    from (select * from freeBoard where frb_del = 'n' and user_id = 'admin' order by frb_reg_date desc, frb_id desc)
+		                    union all
+		                    select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                    from (select * from customerService where cs_del = 'n' and user_id = 'admin' and cs_level = 0 order by cs_reg_date desc, cs_id desc)
+		                    union all
+		                    select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                    from (select * from mediInfoBoard where mib_del = 'n' and user_id = 'admin' order by mib_reg_date desc, mib_id desc)
+		                    union all
+		                    select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                    from (select * from questionBoard where qsb_del = 'n' and user_id = 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                    union all
+		                    select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                    from (select * from reviewBoard where rvb_del = 'n' and user_id = 'admin' order by rvb_reg_date desc, rvb_id desc)
+		                )
+		            )
+		    )f_qry
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByKeyWord" parameterType="map" resultType="searchboard" flushCache="true">
+		select * from(
+		    select f_qry.*, rownum as rnum from (
+		        select * from (
+		                select * from (
+		                    select frb_id id, user_id, frb_title title, frb_content content,
+		                    frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                    from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		                    union all
+		                    select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                    from (select * from customerService where cs_del = 'n' and user_id != 'admin' order by cs_reg_date desc, cs_id desc)
+		                    union all
+		                    select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                    from (select * from mediInfoBoard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		                    union all
+		                    select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                    from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                    union all
+		                    select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                    from (select * from reviewBoard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		                )
+		            )
+		    )f_qry where (title like '%' || #{keyWord} || '%' or content like '%' || #{keyWord} || '%')
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+	<select id="getBoardListByUserId" parameterType="map" resultType="searchboard" flushCache="true">
+		select * from(
+		    select f_qry.*, rownum as rnum from (
+		        select * from (
+		                select * from (
+		                    select frb_id id, user_id, frb_title title, frb_content content,
+		                    frb_reg_date reg_date, frb_view_cnt view_cnt, frb_del del, frb_category category 
+		                    from (select * from freeBoard where frb_del = 'n' and user_id != 'admin' order by frb_reg_date desc, frb_id desc)
+		                    union all
+		                    select cs_id, user_id, cs_title, cs_content, cs_reg_date, cs_view_cnt, cs_del, cs_category
+		                    from (select * from customerService where cs_del = 'n' and user_id != 'admin' order by cs_reg_date desc, cs_id desc)
+		                    union all
+		                    select mib_id, user_id, mib_title, mib_content, mib_reg_date, mib_view_cnt, mib_del, mib_category
+		                    from (select * from mediInfoBoard where mib_del = 'n' and user_id != 'admin' order by mib_reg_date desc, mib_id desc)
+		                    union all
+		                    select qsb_id, user_id, qsb_title, qsb_content, qsb_reg_date, qsb_view_cnt, qsb_del, qsb_category
+		                    from (select * from questionBoard where qsb_del = 'n' and user_id != 'admin' order by qsb_reg_date desc, qsb_id desc)
+		                    union all
+		                    select rvb_id, user_id, rvb_title, rvb_content, rvb_reg_date, rvb_view_cnt, rvb_del, rvb_category
+		                    from (select * from reviewBoard where rvb_del = 'n' and user_id != 'admin' order by rvb_reg_date desc, rvb_id desc)
+		                )
+		            )
+		    )f_qry where user_id = #{id}
+		)where rnum between #{startIdx} and #{endIdx}
+	</select>
+</mapper>

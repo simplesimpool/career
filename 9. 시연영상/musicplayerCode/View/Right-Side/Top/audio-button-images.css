@@ -1,0 +1,64 @@
+.prev-song-button-image {
+    width: 100%;
+    height: 100%;
+}
+
+.prev-song-button-image:hover {
+    opacity: 0.5;
+}
+
+.play-pause-song-button-image {
+    width: 100%;
+    height: 100%;
+}
+
+.play-pause-song-button-image:hover {
+    opacity: 0.5;
+}
+
+.stop-song-button-image {
+    width: 100%;
+    height: 100%;
+}
+
+.stop-song-button-image:hover {
+    opacity: 0.5;
+}
+
+.next-song-button-image {
+    width: 100%;
+    height: 100%;   
+}
+
+.next-song-button-image:hover {
+    opacity: 0.5;
+}
+
+
+
+.repeat-button-image {
+    width: 100%;
+    height: 100%;
+}
+
+.repeat-button-image:hover {
+    opacity: 0.5;
+}
+
+.shuffle-button-image {
+    width: 100%;
+    height: 100%;
+}
+
+.shuffle-button-image:hover {
+    opacity: 0.5;
+}
+
+.volume-button-image {
+    width: 30%;
+    height: 100%;
+}
+
+.volume-button-image:hover {
+    opacity: 0.5;
+}

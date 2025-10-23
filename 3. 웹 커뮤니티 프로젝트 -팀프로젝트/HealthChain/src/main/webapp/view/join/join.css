@@ -1,0 +1,78 @@
+@charset "UTF-8";
+*{
+	box-sizing: border-box;
+	border-radius:5px; 
+}
+.err{
+	color: red;
+}
+
+body {
+  background-color: #6d8c50;
+  margin: 0;
+  margin-top:40px;
+  margin-bottom: 30px;
+}
+.chkbtn { /* 중복확인 등 버튼 */
+	border: none;
+	margin-left: 30px;
+	background-color: #84a765;
+	color: #f4f1eb;
+}
+.chkbtn:hover {
+	background-color: #b0d084;
+}
+.joinform {
+	width: 600px;
+	background-color: #f4f1eb;
+	margin-right:auto;
+	margin-left: auto;
+	margin-top: 20px;
+	padding: 15px;
+	text-align: left;
+	border: none;
+}
+.submit-btn{
+	font-size: 14px;
+	border: none;
+	padding: 10px;
+	margin-bottom: 5px;
+	width: 260px;
+	background-color: #6d8c50;
+	color: white;
+}
+.submit-btn:hover{
+	background-color: #b0d084
+}
+.line {
+	margin: 15px;
+	color: #2b473e;
+}
+.line div {
+	font-weight: bold;
+	font-size: 16px;
+	margin-bottom: 6px
+}
+.textfield{
+	border:none;
+	border-bottom-style: dashed;
+	border-bottom-color: #6d8c50;
+	border-bottom-width: thin;
+	margin-bottom: 10px;
+	padding: 8px;
+	width: 320px;
+}
+span {
+	font-size: 20pt;
+}
+.logo{
+	margin-top: 10px;
+	margin-bottom: 20px;
+	margin-left: 10px;
+}
+.logo a{
+	font-size: 2em;
+	color: #2b473e;
+	text-decoration: none;
+	
+}
