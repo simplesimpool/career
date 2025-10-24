@@ -232,20 +232,20 @@ VALUES (1, 5, '게시판2-게시글2-파일1', '게시판2-게시글2-파일1', '게시판2-게시글2
 INSERT INTO PostMultipart (p_file_id, post_id, p_ori_file_name, p_new_file_name, p_file_loc, p_file_format, p_file_cre_date)
 VALUES (2, 5, '게시판2-게시글2-파일2', '게시판2-게시글2-파일2', '게시판2-게시글2-파일2위치', 'img', SYSDATE);
 
-SELECT * FROM Board;
-SELECT * FROM Users;
-SELECT * FROM Administrator;
-SELECT * FROM PostDelete;
-SELECT * FROM Post;
-SELECT * FROM PostContent;
-SELECT * FROM PostComment;
-SELECT * FROM PostMultipart;
+--SELECT * FROM Board;
+--SELECT * FROM Users;
+--SELECT * FROM Administrator;
+--SELECT * FROM PostDelete;
+--SELECT * FROM Post;
+--SELECT * FROM PostContent;
+--SELECT * FROM PostComment;
+--SELECT * FROM PostMultipart;
 
-DROP TABLE Board;
-DROP TABLE Post;
-DROP TABLE PostContent;
-DROP TABLE PostDelete;
-DROP TABLE Users;
-DROP TABLE PostComment;
-DROP TABLE PostMultipart;
-DROP TABLE Administrator;
+--DROP TABLE Board;
+--DROP TABLE Post;
+--DROP TABLE PostContent;
+--DROP TABLE PostDelete;
+--DROP TABLE Users;
+--DROP TABLE PostComment;
+--DROP TABLE PostMultipart;
+--DROP TABLE Administrator;
