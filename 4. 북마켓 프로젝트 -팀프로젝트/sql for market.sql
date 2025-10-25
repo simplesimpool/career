@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
-SELECT dt_qry.*, (dt_qry.tot_odr_cnt - dt_qry.prev_tot_odr_cnt) / prod_std_efv_date odr_delta, prod.* --초안 SQL
+SELECT dt_qry.*, (dt_qry.tot_odr_cnt - dt_qry.prev_tot_odr_cnt) / prod_std_efv_date odr_delta, prod.* --버전1
 FROM (SELECT p.product_id product_id, COUNT(p.product_id) tot_odr_cnt,
     (SELECT COUNT(*)
     FROM Orders o1
@@ -18,7 +18,7 @@ INNER JOIN Product prod ON (dt_qry.product_id = prod.product_id)
 WHERE (dt_qry.tot_odr_cnt - dt_qry.prev_tot_odr_cnt) / prod_std_efv_date > prod_std_ord_delta
 ORDER BY dt_qry.tot_odr_cnt DESC, prod.product_rating DESC, prod.product_rating_cnt DESC, prod.product_view_cnt DESC;
 -------------------------------------------------------------------------------------------------------------------------
-SELECT p.product_id product_id, --그나마 개선된 SQL 
+SELECT p.product_id product_id, --버전2 
     MAX(p.product_name) product_name,
     MAX(p.product_reg_date) product_reg_date,
     MAX(p.product_rating) product_rating,
